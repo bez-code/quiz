@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { QuizService } from '../../Services/quiz.service';
 
 @Component({
   selector: 'app-question',
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./question.component.scss']
 })
 export class QuestionComponent {
+  constructor (public quizService :QuizService){}
 
 }

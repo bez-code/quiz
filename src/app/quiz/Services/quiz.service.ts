@@ -1,10 +1,22 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { QuestionInterface } from '../types/question.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuizService {
+
+  questions = signal<QuestionInterface[]>(this.getMockQuestion());
+
+  currentQuestionIndex = signal<number>(0)
+
+  currentQuestion = computed(() =>
+    this.questions()[this.currentQuestionIndex()]
+  );
+
+  goToNextQuestion(): void {
+    this.currentQuestionIndex.set(this.currentQuestionIndex() + 1)
+  }
 
   getMockQuestion(): QuestionInterface[] {
     return [
@@ -21,7 +33,7 @@ export class QuizService {
       {
         question:
           'Where in an HTML document is the correct place to refer to an external style sheet?',
-          incorrectAnswer: [
+        incorrectAnswer: [
           'In the <body> section',
           'At the end of the document',
           "You can't refer to an external style sheet",
@@ -73,3 +85,5 @@ export class QuizService {
     ]
   }
 }
+
+
