@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { QuizService } from './Services/quiz.service';
 
 @Component({
@@ -6,8 +6,25 @@ import { QuizService } from './Services/quiz.service';
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.scss']
 })
-export class QuizComponent {
+export class QuizComponent implements OnInit {
 
-  constructor (public quizService :QuizService){}
+  constructor(public quizService: QuizService) { }
+
+  ngOnInit(): void {
+    this.quizService.getQuestion().subscribe({
+      next: question => {
+
+        this.quizService.questions.set(question)
+      },
+      error: (err) => {
+        this.quizService.error.set(err.massage)
+      }
+    })
+
 
 }
+
+
+
+}
+

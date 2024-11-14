@@ -7,6 +7,7 @@ import { QuizComponent } from './quiz/quiz.component';
 import { QuestionComponent } from './quiz/component/question/question.component';
 import { AnswerComponent } from './quiz/component/answer/answer.component';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { CommonModule } from '@angular/common';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    CommonModule
+    CommonModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

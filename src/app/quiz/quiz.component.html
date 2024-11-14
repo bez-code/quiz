@@ -1,5 +1,14 @@
 <div class="quiz">
 
+    @if (quizService.error()) {
+    <div class="results">
+        <div class="congratulations">Server Error</div>
+        <div class="results-info">
+            <div>{{quizService.error()}}</div>
+        </div>
+    </div>
+    }
+
     @if (quizService.showResults()) {
     <div class="results">
         <div class="congratulations">Congratulations!</div>

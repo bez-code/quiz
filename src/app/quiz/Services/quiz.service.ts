@@ -1,18 +1,24 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { QuestionInterface } from '../types/question.interface';
+import { map, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BackendQuestionInterface } from '../types/BackendQuestion.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuizService {
 
-  questions = signal<QuestionInterface[]>(this.getMockQuestion());
+  http = inject(HttpClient)
+  questions = signal<QuestionInterface[]>([]);
 
   currentQuestionIndex = signal<number>(0)
 
   currentAnswer = signal<string | null>(null)
 
   correctAnswerCount = signal<number>(0)
+
+  error = signal<string | null>(null)
 
   currentQuestion = computed(() =>
     this.questions()[this.currentQuestionIndex()]
@@ -34,8 +40,8 @@ export class QuizService {
     this.currentAnswer.set(answerText);
     const correctAnswerCount = answerText === this.currentQuestion().correctAnswer ?
       this.correctAnswerCount() + 1 :
-      this.correctAnswerCount(); 
-      this.correctAnswerCount.set(correctAnswerCount)
+      this.correctAnswerCount();
+    this.correctAnswerCount.set(correctAnswerCount)
   }
 
   currentQuesstionAnswer = computed(() =>
@@ -54,6 +60,25 @@ export class QuizService {
 
   restart(): void {
     this.currentQuestionIndex.set(0)
+  }
+
+  getQuestion(): Observable<QuestionInterface[]> {
+    const apiUrl = 'https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple';
+    return this.http.get<{ results: BackendQuestionInterface[] }>(apiUrl)
+      .pipe(map(response => this.normaliseQeustion(response.results)))
+  }
+
+  normaliseQeustion(backendQuestion: BackendQuestionInterface[]): QuestionInterface[] {
+    return backendQuestion.map(backendQuestion => {
+      const incorrectAnswer = backendQuestion.incorrect_answers.map(incorrectAnswer =>
+        decodeURIComponent(incorrectAnswer))
+      return {
+        question: decodeURIComponent(backendQuestion.question),
+        correctAnswer: decodeURIComponent(backendQuestion.correct_answer),
+        incorrectAnswer
+      }
+
+    })
   }
 
   getMockQuestion(): QuestionInterface[] {
